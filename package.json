@@ -1,0 +1,23 @@
+{
+  "name": "juvance-node",
+  "version": "1.0.0",
+  "description": "create to learn new things",
+  "keywords": [
+    "jivasa-toky"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "y"
+  },
+  "license": "ISC",
+  "author": "jivasa-toky",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "dependencies": {
+    "package.json": "^0.0.0",
+    "pkg.json": "^2.0.9"
+  }
+}
