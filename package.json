@@ -11,7 +11,7 @@
   },
   "license": "ISC",
   "author": "jivasa-toky",
-  "type": "commonjs",
+  "type": "module",
   "main": "app.js",
   "scripts": {
     "test": "test"
