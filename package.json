@@ -11,13 +11,15 @@
   },
   "license": "ISC",
   "author": "jivasa-toky",
-  "type": "module",
+  "type": "commonjs",
   "main": "app.js",
   "scripts": {
     "test": "test"
   },
   "dependencies": {
     "package.json": "^0.0.0",
-    "pkg.json": "^2.0.9"
+    "parse-url": "^10.0.3",
+    "pkg.json": "^2.0.9",
+    "tmp": "^0.2.5"
   }
 }
