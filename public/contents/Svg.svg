@@ -1,0 +1,35 @@
+<svg width="300" height="100" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradient for vibrant contrast on dark background -->
+    <linearGradient id="juvanceGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00FFE0"/>
+      <stop offset="100%" stop-color="#A259FF"/>
+    </linearGradient>
+    <style>
+      .bg {
+        fill: #121212;
+      }
+      .text {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 48px;
+        font-weight: bold;
+        fill: url(#juvanceGradient);
+      }
+      .v-arrow {
+        fill: url(#juvanceGradient);
+      }
+    </style>
+  </defs>
+
+  <!-- Background rectangle for dark mode -->
+  <rect class="bg" width="300" height="100" rx="12" />
+
+  <!-- "Ju" -->
+  <text x="10" y="65" class="text">Ju</text>
+
+  <!-- Stylized "V" as arrow -->
+  <polygon class="v-arrow" points="85,20 100,65 115,20" />
+
+  <!-- "ance" -->
+  <text x="120" y="65" class="text">ance</text>
+</svg>

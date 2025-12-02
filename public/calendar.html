@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+    <link rel="stylesheet" href="calendar.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/@dragdroptouch/dragdroptouch/drag-drop-touch.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Prevent caching -->
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <!-- Google API JS -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <title>Calendar</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="contents/favicon.png">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="calendar.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/a3502f08c4.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+ <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M4VSECXJ2H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M4VSECXJ2H');
+</script>
+  
+  <body>
+    <!-- Sidebar -->
+
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>📁 Menu</h2>
+        <button class="close-btn" id="dark-toggle" onclick="toggleSidebar()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <ul class="sidebar-links">
+        <li>
+          <a href="dashboard.html"><i class="fas fa-home"></i> Home</a>
+        </li>
+        <li>
+          <a href="weather.html"><i class="fas fa-cloud-sun"></i> Weather</a>
+        </li>
+        <li>
+          <a href="calendar.html"><i class="fas fa-calendar-check"></i> Calendar</a>
+        </li>
+        <li>
+           <a href="travel.html"><i class="fa-solid fa-map-location"></i>Travel</a>
+        </li>
+        <li class="toggle-btn" onclick="toggleDarkMode()">
+          <i id="mode-icon" class="fas fa-moon"></i> Light/Dark
+        </li>
+      </ul>
+    </div>
+
+    <!-- Navbar -->
+    <div class="navbar">
+      <h1><i class="fa-solid fa-calendar-check"></i> Calendar</h1>
+      <div>
+        <span class="clock" id="clock">--:--:--</span>     
+      </div>
+    </div>
+    <div id="notification-content" class="notification-content hide">
+      <i class="fa-solid fa-caret-up"></i>
+      <div class="no-notification">No task</div>
+    </div>
+    <!-- Main Content -->
+    <div id="body-container" class="body-container">
+      <div id="spinner" class="spinner-overlay">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Place the sync button above the calendar layout -->
+      <div style="text-align:right; margin:15px 30px 0 0;">
+        <button id="google-sync-btn" style="background:linear-gradient(135deg,#00BFA6,#8E2DE2);color:white;padding:8px 18px;border-radius:5px;border:none;font-weight:bold;cursor:pointer;">
+          <i class="fa-brands fa-google"></i> Sync with Google Calendar
+        </button>
+      </div>
+
+      <!-- Main Calendar Layout -->
+      <div class="calendar-container">
+        <button id="hamburger" class="hamburger" onclick="toggleSidebar()">
+          ☰
+        </button>
+        <hr>
+        <aside class="cal-sidebar">
+          <i id="prev" class="fa-solid fa-angle-left"></i
+          ><span id="year">2020</span
+          ><i id="next" class="fa-solid fa-angle-right"></i>
+          <ul id="month">
+            <li class="month-tab">January</li>
+            <li class="month-tab">February</li>
+            <li class="month-tab">March</li>
+            <li class="month-tab">April</li>
+            <li class="month-tab">May</li>
+            <li class="month-tab">June</li>
+            <li class="month-tab">July</li>
+            <li class="month-tab">August</li>
+            <li class="month-tab">September</li>
+            <li class="month-tab">October</li>
+            <li class="month-tab">November</li>
+            <li class="month-tab">December</li>
+          </ul>
+        </aside>
+
+        <main class="calendar">
+          <h2 id="current-month" class="month">MAY</h2>
+          <div class="weekdays">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+          </div>
+          <div id="days" class="days"></div>
+        </main>
+
+        <aside class="details">
+          <h3 id="day-event"></h3>
+          <form id="task-form">
+            <input
+              type="text"
+              class="task-enter-input"
+              id="task-search"
+              placeholder="Search tasks..."
+            />
+            <div id="modal" class="modal hidden">
+              <p>Task comment's date is 22 June 2025</p>
+              <button id="hide-modal">Close</button>
+            </div>
+            <input
+              type="text"
+              id="task-input"
+              class="task-enter-input"
+              placeholder="Enter new task"
+              required
+            />
+            <input
+            type="date"
+            class="input-date"
+            id="start"
+            name="start"
+            min="2025-01-01"
+          />
+
+          <select id="priority-select">
+            <option value="">Priority</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+
+          <select id="recurrence-select">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+
+            <select id="category-select" required>
+              <option value="" disabled selected>Select category</option>
+              <option value="work">Work</option>
+              <option value="personal">Personal</option>
+              <option value="ministry">Ministry</option>
+            </select>
+            <button id="submit-btn">Add Task</button>
+          </form>
+
+          <div id="to-do-list">
+            <div id="task-filters" style="margin-bottom:10px;">
+              <button data-filter="all">All</button>
+              <button data-filter="completed">Completed</button>
+              <button data-filter="incomplete">Incomplete</button>
+            </div>
+            <div class="category work">
+              <h2><span class="dot works"></span> Work</h2>
+              <ul class="todo-list" id="work">
+                <div class="no-list">No to do list, add one</div>
+              </ul>
+            </div>
+
+            <div class="category personal">
+              <h2><span class="dot personals"></span> Personal</h2>
+              <ul class="todo-list" id="personal">
+                <div class="no-list">No to do list, add one</div>
+              </ul>
+            </div>
+
+            <div class="category ministry">
+              <h2><span class="dot ministries"></span> Ministry</h2>
+              <ul class="todo-list" id="ministry">
+                <div class="no-list">No to do list, add one</div>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+    <!-- AI Chatbot Toggle Button -->
+    <button id="ai-chatbot-toggle" aria-label="Open AI Chatbot">
+        <i class="fa-solid fa-robot" aria-hidden="true"></i>
+    </button>
+
+    <!-- AI Chatbot Interface (initially hidden or controlled by JS) -->
+    <div class="aicontentpage" id="aiContent">
+        <button class="close-btn" id="x-close" aria-label="Close AI Chatbot">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="aicontainer">
+            <h1>Gemini Chatbot</h1>
+            <p>Ask a question or start a conversation by analyzing the current page.</p>
+
+            <textarea id="user-input" placeholder="Ask Gemini a follow-up question..." aria-label="Your message to Gemini"></textarea>
+
+            <div class="chat-controls">
+                <button onclick="triggerGeminiRequest()" aria-label="Send your message">Send Message</button>
+                <button id="analyzePage" aria-label="Analyze current page">Start Analysis</button>
+            </div>
+
+            <h2>Conversation History:</h2>
+            <div id="gemini-output" role="log" aria-live="polite">
+                <div class="system-note">Welcome! Start by asking a question or clicking 'Start Analysis'.</div>
+            </div>
+        </div>
+    </div>
+    <script type="module"></script>
+    <script type="module" src="calendar.js"></script>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+      AOS.init();
+
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        const icon = document.getElementById("mode-icon");
+        icon.classList.toggle("fa-moon");
+        icon.classList.toggle("fa-sun");
+      }
+
+      function updateClock() {
+        const now = new Date();
+        document.getElementById("clock").textContent = now.toLocaleTimeString();
+      }
+
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("hamburger").classList.toggle("hidden");
+      }
+    </script>
+  </body>
+</html>

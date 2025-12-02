@@ -1,0 +1,177 @@
+body,
+html {
+  font-family: "Roboto", sans-serif;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+:root {
+  --bg-color: rgba(255, 255, 255, 0.9);
+  --text-color: #333;
+  --button-bg: #4caf50;
+  --button-hover: #45a049;
+}
+
+body.dark {
+  --primary-color: #00BFA6;
+  --secondary-color: #8E2DE2;
+  --text-color: #f0f0f0;
+  --button-bg: #222;
+  --button-hover: #444;
+  background-color: #121212;
+  color: var(--text-color);
+}
+
+.hero {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1350&q=80");
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position:relative;
+}
+
+  .svg{
+    position: absolute;
+    top:5px;
+    left:5px;
+    width:100px;
+    
+  }
+
+
+.profile-card {
+  background-color: rgba(255, 255, 255, 0.1); /* Light transparent background */
+  backdrop-filter: blur(12px); /* Glass effect */
+  -webkit-backdrop-filter: blur(12px); /* Safari support */
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 1.2s ease-in-out;
+  max-width: 90%;
+  width: 400px;
+  color: #fff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+.profile-pic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  border: 4px solid #00BFA6;
+}
+
+h1 {
+  margin: 10px 0;
+  color: var(--text-color);
+}
+
+p {
+  color: var(--text-color);
+  margin-bottom: 20px;
+}
+
+.login-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background: linear-gradient(
+        135deg,
+        #00BFA6,
+        #8E2DE2
+      );
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background: linear-gradient(
+    135deg,
+    #8E2DE2,
+    #00BFA6
+  );
+  transform: scale(1.05);
+}
+
+.login-button:focus,
+#toggle-theme:focus {
+  outline: 2px solid #00BFA6;
+  outline-offset: 2px;
+}
+
+#toggle-theme {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.photo-source{
+  position: absolute;
+  left : 5px;
+  bottom: 5px;
+  color:#fff;
+  }
+
+.photo-source p{
+  display: inline;
+  color:#fff;
+}
+
+.photo-source a{
+  color:#fff;
+  }
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-card {
+    width: 100%;
+  }
+
+  .profile-pic {
+    width: 240px;
+    height: 240px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,545 @@
+ <!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="icon" href="contents/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet">
+    <link href="dashboard.css" rel="stylesheet"/>
+    <link href="ai_styles.css" rel="stylesheet"/>
+
+    <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-messaging.js" defer></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5XKNMBJW45" defer></script>
+    <style>
+       /* Base styles and animations */
+        * {
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: "Roboto", sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            transition: background 0.5s, color 0.5s;
+            height: 100%;
+        }
+
+        @keyframes gradientBG {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .dark-mode {
+            background: linear-gradient(135deg, #121212, #1e1e1e);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -5000px; /* Hidden by default */
+            width: 250px;
+            height: 100%;
+            background: var(--sidebar-bg, rgba(255, 255, 255, 0.1)); /* Fallback */
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+            color: #333;
+            overflow-y: auto; /* In case of many links */
+        }
+        .dark-mode .sidebar {
+            color: #fff;
+            background: var(--sidebar-bg-dark, rgba(0, 0, 0, 0.1));
+        }
+        .sidebar.open {
+            left: 0;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .sidebar-header h2 {
+            font-size: 20px;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: inherit;
+            padding: 5px;
+            transition: transform 0.2s ease;
+        }
+        .close-btn:hover {
+            transform: scale(1.1);
+        }
+        .dark-mode .close-btn {
+            color: #fff;
+        }
+        .sidebar-links {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .sidebar-links li {
+            margin: 15px 0;
+        }
+        .sidebar-links a {
+            text-decoration: none;
+            color: inherit;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        .sidebar-links a:hover {
+            color: var(--hover-color, #007bff);
+            transform: translateX(5px);
+        }
+        .sidebar-links i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: var(--nav-bg-color, rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            padding-left: 60px; /* Accommodate hamburger */
+            color: var(--nav-color, #333);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow-light, 0 2px 5px rgba(0,0,0,0.1));
+            position: relative;
+            z-index: 100;
+        }
+        .dark-mode .navbar {
+            color: var(--nav-color-dark, #fff);
+            background: var(--nav-bg-color-dark, rgba(0,0,0,0.1));
+        }
+        .navbar h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        .navbar h1 .fa-cloud-sun {
+            margin-right: 8px;
+        }
+        .navbar .right-controls {
+            display: flex;
+            align-items: center;
+        }
+        .clock {
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .toggle-btn {
+            background: none;
+            border: 2px solid currentColor;
+            color: inherit;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: transform 0.2s ease;
+            margin-left: 10px;
+        }
+        .toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Hamburger Button */
+        .hamburger {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1100;
+            padding: 5px;
+            transition: transform 0.2s ease;
+        }
+        .hamburger:hover {
+            transform: scale(1.1);
+        }
+        .hamburger.hidden {
+            display: none;
+        }
+        .dark-mode .hamburger {
+            color: #fff;
+        }
+
+        /* Main Content */
+        .menu-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 60px 20px;
+            gap: 30px;
+            max-width: 1200px; /* Limit max width */
+            margin: 20px auto; /* Center the container and add some top margin */
+        }
+
+        .menu-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            padding: 30px;
+            text-align: center;
+            color: #333;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dark-mode .menu-card {
+            background: rgba(255, 255, 255, 0.05);
+            color: #eee;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-card i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #4caf50;
+            animation: pulse 2s infinite;
+        }
+
+        .menu-card .fa-map-location {
+            color: #0066ff;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .menu-card h2 {
+            margin-bottom: 10px;
+        }
+
+        .menu-card p {
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .menu-card a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #00BFA6, #8E2DE2);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: bold;
+        }
+
+        .menu-card a:hover {
+            background: linear-gradient(135deg, #8E2DE2, #00BFA6);
+            transform: translateY(-2px);
+        }
+
+        /* AI Chatbot Toggle Button */
+        #ai-chatbot-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #00BFA6, #8E2DE2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1010;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        #ai-chatbot-toggle:hover {
+            transform: scale(1.1) translateY(-4px);
+            background: linear-gradient(135deg, #8E2DE2, #00BFA6);
+        }
+        #ai-chatbot-toggle .fa-robot {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .menu-card {
+                width: 90%;
+            }
+            .navbar {
+                padding-left: 50px; /* Adjust for smaller screens */
+            }
+            .hamburger {
+                top: 12px;
+                left: 10px;
+            }
+            .menu-container {
+                padding-top: 50px;
+            }
+            #ai-chatbot-toggle {
+                bottom: 15px;
+                right: 15px;
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M4VSECXJ2H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M4VSECXJ2H');
+</script>
+
+<body data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation menu">
+        <div class="sidebar-header">
+            <h2>Menu</h2>
+            <button class="close-btn" onclick="toggleSidebar()" aria-label="Close menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <ul class="sidebar-links">
+            <li>
+                <a href="dashboard.html" aria-label="Go to Home page"><i class="fas fa-home"></i> Home</a>
+            </li>
+            <li>
+                <a href="weather.html" aria-label="Go to Weather page"><i class="fas fa-cloud-sun"></i> Weather</a>
+            </li>
+            <li>
+                <a href="calendar.html" aria-label="Go to Calendar page"><i class="fas fa-calendar-check"></i> Calendar</a>
+            </li>
+            <li>
+                <a href="travel.html" aria-label="Go to Travel page"><i class="fa-solid fa-map-location"></i> Travel</a>
+            </li>
+            <li>
+                <a href="gallery.html" aria-label="Go to Gallery page"><i class="fa-solid fa-image"></i> Gallery</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Hamburger Button -->
+    <button id="hamburger" class="hamburger" aria-label="Open menu" onclick="toggleSidebar()">
+        &#9776;
+    </button>
+
+    <!-- Navbar -->
+    <header class="navbar">
+        <h1>🌟 Application</h1>
+        <div class="right-controls">
+            <span class="clock" id="clock" aria-live="polite"></span>
+            <button class="toggle-btn" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+                <i id="mode-icon" class="fas fa-moon"></i>
+            </button>
+            <button tooltip="Sign out" class="toggle-btn" id="signOutUser" aria-label="Sign out">
+                <i class="fas fa-person-walking-arrow-right"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="menu-container" id="main-content">
+        <div class="menu-card" data-aos="fade-up" role="region" aria-label="Weather App Link">
+            <i class="fas fa-cloud-sun"></i>
+            <h2>Weather App</h2>
+            <p>Check the current weather and forecast in your area.</p>
+            <a href="weather.html">Open Weather App</a>
+        </div>
+
+        <div class="menu-card" data-aos="fade-up" data-aos-delay="100" role="region" aria-label="Calendar and To-Do List Link">
+            <i class="fas fa-calendar-check"></i>
+            <h2>Calendar To-Do List</h2>
+            <p>Manage your schedule and tasks efficiently.</p>
+            <a href="calendar.html">Open Calendar App</a>
+        </div>
+
+        <div class="menu-card" data-aos="fade-up" role="region" aria-label="Travel App Link">
+            <i class="fa-solid fa-map-location"></i>
+            <h2>Travel App</h2>
+            <p>Discover beautiful places to visit around the world.</p>
+            <a class="visit" href="travel.html">Open Travel App</a>
+        </div>
+
+        <div class="menu-card" data-aos="fade-up" role="region" aria-label="About App Link">
+            <i class="fa-solid fa-info-circle"></i>
+            <h2>About App</h2>
+            <p>Learn more about the application and its features.</p>
+            <a href="about.html">Open About App</a>
+        </div>
+    </main>
+
+    <!-- AI Chatbot Toggle Button -->
+    <button id="ai-chatbot-toggle" aria-label="Open AI Chatbot">
+        <i class="fa-solid fa-robot" aria-hidden="true"></i>
+    </button>
+
+    <!-- AI Chatbot Interface (initially hidden or controlled by JS) -->
+    <div class="aicontentpage" id="aiContent">
+        <button class="close-btn" id="x-close" aria-label="Close AI Chatbot">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="aicontainer">
+            <h1>Gemini Chatbot</h1>
+            <p>Ask a question or start a conversation by analyzing the current page.</p>
+
+            <textarea id="user-input" placeholder="Ask Gemini a follow-up question..." aria-label="Your message to Gemini"></textarea>
+
+            <div class="chat-controls">
+                <button onclick="triggerGeminiRequest()" aria-label="Send your message">Send Message</button>
+                <button id="analyzePage" aria-label="Analyze current page">Start Analysis</button>
+            </div>
+
+            <h2>Conversation History:</h2>
+            <div id="gemini-output" role="log" aria-live="polite">
+                <div class="system-note">Welcome! Start by asking a question or clicking 'Start Analysis'.</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="gemini.js"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        // Core JS for toggling elements and theme
+        const aiBtn = document.getElementById('ai-chatbot-toggle');
+        const aiCloseBtn = document.getElementById('x-close');
+        const aiContent = document.getElementById('aiContent');
+        const sidebar = document.getElementById('sidebar');
+        const hamburger = document.getElementById('hamburger');
+
+        // AI Chatbot Toggle
+        aiBtn.addEventListener('click', () => {
+            aiContent.style.display = 'flex'; // Show AI content
+            aiBtn.classList.add('hidden'); // Hide the toggle button
+            hamburger.classList.add('hidden'); // Optionally hide hamburger when AI is active
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        });
+
+        aiCloseBtn.addEventListener('click', () => {
+            aiContent.style.display = 'none'; // Hide AI content
+            aiBtn.classList.remove('hidden'); // Show the toggle button
+            hamburger.classList.remove('hidden'); // Show hamburger again
+            document.body.style.overflow = 'auto'; // Restore background scrolling
+        });
+
+        /**
+         * Function executed when the 'Send Message' button is clicked.
+         * Handles subsequent questions in the conversation.
+         */
+        function triggerGeminiRequest() {
+            const userInput = document.getElementById('user-input').value;
+            if (userInput.trim() !== "") {
+                // The askGemini function (from gemini.js) handles sending history
+                askGemini(userInput);
+                document.getElementById('user-input').value = ''; // Clear input
+            } else {
+                const outputDiv = document.getElementById('gemini-output');
+                outputDiv.innerHTML += '<div class="error-message">Please enter a message.</div>';
+                outputDiv.scrollTop = outputDiv.scrollHeight; // Scroll to bottom
+            }
+        }
+
+        // Allow pressing Enter in the textarea to send message
+        document.getElementById('user-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) { // Prevent Enter from sending if Shift is pressed
+                event.preventDefault(); // Prevent default newline
+                triggerGeminiRequest();
+            }
+        });
+
+        // Initialize AOS (Animation On Scroll) library
+        AOS.init();
+
+        // Theme Toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            const icon = document.getElementById("mode-icon");
+            icon.classList.toggle("fa-moon");
+            icon.classList.toggle("fa-sun");
+        }
+
+        // Clock Update
+        function updateClock() {
+            const now = new Date();
+            // Format time for better readability, e.g., HH:MM:SS AM/PM
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+            document.getElementById("clock").textContent = timeString;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call to display time immediately
+
+        // Sidebar Toggle
+        function toggleSidebar() {
+            sidebar.classList.toggle("open");
+            hamburger.classList.toggle("hidden");
+            // Adjust body overflow based on sidebar state if needed
+            if (sidebar.classList.contains('open')) {
+                document.body.style.overflow = 'hidden'; // Prevent scrolling when sidebar is open
+            } else {
+                document.body.style.overflow = 'auto'; // Allow scrolling when sidebar is closed
+            }
+        }
+
+        // Close sidebar if clicking outside of it
+        document.addEventListener('click', function(event) {
+            if (!sidebar.contains(event.target) && !hamburger.contains(event.target) && sidebar.classList.contains('open')) {
+                toggleSidebar();
+            }
+        });
+
+    </script>
+    <script type="module" src="dashboard.js"></script>
+</body>
+
+</html>

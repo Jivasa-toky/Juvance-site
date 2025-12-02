@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Forgot Password</title>
+    <link rel="icon" href="contents/favicon.png">
+    <link rel="stylesheet" href="login.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M4VSECXJ2H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M4VSECXJ2H');
+</script>
+  <body>
+    <div class="hero">
+      <div class="profile-card">
+        <h1>Forgot Password</h1>
+        <p>
+          Enter your email address and we'll send you a password reset link.
+        </p>
+  <form id="forgotPasswordForm">
+ <label for="email">Enter your account email:</label> 
+<input type="email" id="resetEmail" required style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;"> 
+<button class="login-button" type="submit">Send Reset Link</button> 
+<p id="message"></p> 
+</form>
+        <p style="margin-top: 15px">
+          <a
+            href="login.html"
+            style="display: inline-block"
+            >Back to Login</a
+          >
+        </p>
+      </div>
+    </div>
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
+<script src="forgot.js" type="module"></script>
+  </body>
+</html>

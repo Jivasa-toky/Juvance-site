@@ -1,0 +1,445 @@
+  * {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  transition: background 0.5s, color 0.5s;
+  height: 100%;
+}
+
+@keyframes gradientBG {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.dark-mode {
+  background: linear-gradient(135deg, #121212, #1e1e1e);
+}
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -5000px;
+            width: 250px;
+            height: 100%;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+            color: #333;
+        }
+        .dark-mode .sidebar {
+            color: #fff;
+        }
+        .sidebar.open {
+            left: 0;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .sidebar-header h2 {
+            font-size: 20px;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: inherit;
+            padding: 5px;
+             transition: transform 0.2s ease;
+        }
+        .close-btn:hover {
+            transform: scale(1.1);
+        }
+        .dark-mode .close-btn {
+            color: #fff;
+        }
+        .sidebar-links {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .sidebar-links li {
+            margin: 15px 0;
+        }
+        .sidebar-links a {
+            text-decoration: none;
+            color: inherit;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        .sidebar-links a:hover {
+            color: var(--hover-color);
+            transform: translateX(5px);
+        }
+        .sidebar-links i {
+            margin-right: 10px;
+            width: 20px; /* Align icons */
+            text-align: center;
+        }
+
+
+.hamburger {
+  position: absolute;
+  top: 15px;
+  left: 5px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.dark-mode .hamburger {
+  color: #fff;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.dark-mode .close-btn {
+  color: #fff;
+}
+
+        .navbar {
+            background-color: var(--nav-bg-color);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            padding-left: 60px; /* Accommodate hamburger */
+            color: var(--nav-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow-light);
+            position: relative;
+            z-index: 100;
+        }
+        .navbar h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        .navbar h1 .fa-cloud-sun {
+            margin-right: 8px;
+        }
+        .navbar .right-controls {
+            display: flex;
+            align-items: center;
+        }
+        .clock {
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .toggle-btn {
+            background: none;
+            border: 2px solid currentColor;
+            color: inherit;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: transform 0.2s ease;
+        }
+        .toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Hamburger Button */
+        .hamburger {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1100;
+            padding: 5px;
+            transition: transform 0.2s ease;
+        }
+        .hamburger:hover {
+            transform: scale(1.1);
+        }
+        .hamburger.hidden { 
+            display: none;
+            /* Or opacity: 0; */
+        }
+        .dark-mode .hamburger {
+            color: #fff;
+        }
+
+
+/* Main Content */
+.menu-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 30px;
+}
+
+.menu-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 300px;
+  padding: 30px;
+  text-align: center;
+  color: #333;
+  transition: transform 0.3s ease;
+}
+
+.dark-mode .menu-card {
+  background: rgba(255, 255, 255, 0.05);
+  color: #eee;
+}
+
+.menu-card:hover {
+  transform: translateY(-8px);
+}
+
+.menu-card i {
+  font-size: 48px;
+  margin-bottom: 15px;
+  color: #4caf50;
+  animation: pulse 2s infinite;
+}
+
+.menu-card .fa-map-location{
+  color:#0066ff;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.menu-card h2 {
+  margin-bottom: 10px;
+}
+
+.menu-card p {
+  margin-bottom: 20px;
+}
+
+.menu-card a {
+  display: inline-block;
+  padding: 10px 20px;
+  background: linear-gradient(
+        135deg,
+        #00BFA6,
+        #8E2DE2
+      );
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.menu-card a:hover {
+    background: linear-gradient(
+        135deg,
+        #8E2DE2,
+        #00BFA6
+      );
+}
+
+/*Ai page*/
+.aicontentpage{
+   font-family: Arial, sans-serif;
+   margin: 0;
+   background-color: #f4f7f9;
+   color: #333;
+   width:100%;
+   height:100vh;
+   position: fixed;
+   top:0;
+   left:0;
+   bottom:0;
+   z-index:10;
+   overflow-y: auto;
+   display: none;
+}
+.aicontentpage .fa-xmark{
+   position: absolute;
+   top:40px;
+   left :10px;
+   font-size: 24px;
+   z-index:15;
+}
+        .aicontainer {
+            max-width: 800px; /* Constrained width for better readability */
+            margin: 0 auto; /* Center the container */
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .aicontentpage h1 {
+            color: #8E2DE2;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0; /* Removed default top margin */
+        }
+       .aicontentpage h2 {
+             margin-top: 30px; /* Spacing for section titles */
+             border-bottom: 1px solid #eee;
+             padding-bottom: 5px;
+        }
+        .aicontentpage textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+       .aicontentpage button {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #00BFA6, #8E2DE2);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-right: 10px;
+        }
+       .aicontentpage button:hover {
+            background: linear-gradient(135deg, #8E2DE2, #00BFA6);
+            transform: translateY(-2px); /* Subtle lift effect */
+        }
+
+        /* --- CHAT DISPLAY STYLES --- */
+        #gemini-output {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9; /* Lighter background for the output area */
+            max-height: 500px; /* Limit height and enable scrolling */
+            overflow-y: auto;
+        }
+
+        /* Style for the user's messages */
+        .user-message {
+            background-color: #e0e0e0; /* Lighter, more neutral background */
+            color: #333;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #8E2DE2; /* Accent color */
+            word-wrap: break-word;
+            text-align: right;
+        }
+
+        /* Style for Gemini's messages */
+        .gemini-message {
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #00BFA6; /* Accent color */
+            word-wrap: break-word;
+        }
+
+        /* Style for system notes */
+        .system-note {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            border: 1px solid #ffeeba;
+        }
+
+        /* Style for the horizontal rule used to separate messages */
+        #gemini-output hr {
+            border: none;
+            border-top: 1px dotted #ccc;
+            margin: 20px 0;
+        }
+
+        /* --- CRITICAL CODE BLOCK STYLES --- */
+        .gemini-message pre {
+            background-color: #282c34; /* Darker background for better contrast */
+            color: #abb2bf; /* Softer text color */
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 400px;
+            margin-top: 10px;
+            white-space: pre-wrap; /* Allows wrapping for long lines */
+            word-wrap: break-word;
+        }
+
+        .gemini-message code {
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            display: block;
+        }
+
+        /* Optional: Add a style for the loading indicator */
+        .loading-message {
+            color: #007bff;
+            font-style: italic;
+            padding: 15px;
+        }
+
+        /* Optional: Add a style for error messages */
+       .aicontentpage .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            border: 1px solid #f5c6cb;
+        }
+#ai-img{
+  width: 40px;
+  height:40px;
+  position: fixed;
+  bottom:20px;
+  right:20px;
+  z-index:5;
+  outline:2px solid;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .menu-card {
+    width: 90%;
+  }
+}

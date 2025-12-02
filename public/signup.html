@@ -1,0 +1,24 @@
+<!DOCTYPE html> 
+<html lang="en">
+ <head>
+ <meta charset="UTF-8">
+ <title>Invite-Only Signup</title>
+ </head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M4VSECXJ2H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M4VSECXJ2H');
+</script>
+ <body>
+ <h2>Invite-Only Sign Up</h2>
+ <form id="inviteSignupForm">
+ <input type="email" id="signupEmail" placeholder="Email Address" required> <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" required minlength="6"> <button type="submit">Create Account</button>
+ </form> <p id="messageArea" style="margin-top: 15px;"></p>
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-functions-compat.js"></script>
+ <script type="module" src="signup.js"></script> 
+</body> 
+</html>

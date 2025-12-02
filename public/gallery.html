@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>Gallery</title>
+    <link rel="icon" href="contents/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet">
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body, html {
+        font-family: "Roboto", sans-serif;
+        background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+        height: 100vh;
+        color: #333;
+      }
+
+      @keyframes gradientBG {
+        0%, 100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .dark-mode {
+        background: linear-gradient(135deg, #121212, #1e1e1e);
+        color: #fff;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -250px;
+        width: 250px;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
+        transition: left 0.3s ease;
+        z-index: 1000;
+        padding: 20px;
+      }
+
+      .sidebar.open {
+        left: 0;
+      }
+
+      .dark-mode .sidebar {
+        background: rgba(0, 0, 0, 0.9);
+      }
+
+      .sidebar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .sidebar-header h2 {
+          font-size: 22px;
+      }
+
+      .sidebar-links {
+        list-style: none;
+        padding: 0;
+      }
+
+      .sidebar-links li {
+        margin: 15px 0;
+      }
+
+      .sidebar-links a {
+        text-decoration: none;
+        color: #333;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+      }
+
+      .dark-mode .sidebar-links a {
+        color: #fff;
+      }
+
+      .sidebar-links i {
+        margin-right: 10px;
+        width: 20px; /* Ensure consistent spacing */
+        text-align: center;
+      }
+
+      .hamburger {
+        position: absolute;
+        top: 15px;
+        left: 5px;
+        font-size: 24px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        z-index: 100;
+        padding: 5px;
+      }
+
+      .dark-mode .hamburger {
+        color: #fff;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 5px;
+      }
+
+      .dark-mode .close-btn {
+        color: #fff;
+      }
+
+      /* Navbar */
+      .navbar {
+        background-color: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        padding: 15px 20px;
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .dark-mode .navbar {
+        color: #fff;
+      }
+
+      .navbar h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .clock {
+        font-size: 16px;
+        font-weight: bold;
+        margin-right: 10px;
+      }
+
+      .toggle-btn {
+        background: none;
+        border: 2px solid currentColor;
+        color: inherit;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, color 0.3s;
+      }
+      .toggle-btn:hover {
+          background-color: rgba(255, 255, 255, 0.3);
+      }
+      .dark-mode .toggle-btn:hover {
+          background-color: rgba(0, 0, 0, 0.3);
+      }
+
+      /*------- Main page ------*/
+      .main {
+        padding: 20px;
+        margin-left: 0; /* Adjust if sidebar is open */
+        transition: margin-left 0.3s ease;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+      }
+
+      .title {
+        width: 100%;
+        text-align: center;
+        font-size: 3rem;
+        margin-bottom: 30px;
+        font-weight: bold;
+        color: #8E2DE2; /* Example accent color */
+      }
+
+      .bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 900px; /* Constrain width for better layout */
+        margin-bottom: 30px;
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        padding: 0 20px;
+      }
+
+      .bar .filter button {
+        margin: 5px;
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        color: #333;
+        transition: background-color 0.3s, color 0.3s, transform 0.2s;
+      }
+      .bar .filter button:hover {
+            background: linear-gradient(
+        135deg,
+        #00BFA6,
+        #8E2DE2
+      );
+          color: #2980b9;
+          transform: translateY(-2px);
+      }
+      .bar .filter button.active {
+            background: linear-gradient(
+        135deg,
+        #00BFA6,
+        #8E2DE2
+      );
+          color: #fff;
+      }
+
+      .bar .form {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .bar form input[type="file"],
+      .bar form select,
+      .main button {
+        margin-top: 0; /* Reset margin for alignment in flex */
+        font-size: 16px;
+        border: none;
+        padding: 12px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s, border-color 0.3s, transform 0.2s;
+      }
+
+      input[type="file"] {
+        border: 1px solid #3498db;
+        background-color: #f9f9f9;
+        color: #333;
+        max-width: 310px;
+      }
+
+      input[type="file"]:hover {
+        background-color: #eaf6ff;
+        border-color: #2980b9;
+      }
+
+      .custom-file-upload {
+        display: inline-block;
+        padding: 12px 15px;
+        background-color: #f9f9f9;
+        color: #333;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 15px;
+        border: 1px solid #3498db;
+        transition: background-color 0.3s, border-color 0.3s;
+      }
+      .custom-file-upload:hover {
+            background: linear-gradient(
+        135deg,
+        #00BFA6,
+        #8E2DE2
+      );
+          border-color: #2980b9;
+      }
+
+      select#category {
+        padding: 12px 15px;
+        background-color: #f9f9f9;
+        color: #333;
+        border: 1px solid #3498db;
+        width: auto;
+        min-width: 150px;
+      }
+
+      select#category:focus {
+        border-color: #2980b9;
+        background-color: #eaf6ff;
+        outline: none;
+      }
+
+      .main button#upload {
+          background-color: #3498db;
+          color: white;
+          padding: 12px 20px;
+      }
+      .main button#upload:hover {
+          background-color: #2980b9;
+          transform: translateY(-2px);
+      }
+
+      .preview {
+         display: grid;
+         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid */
+         gap: 20px;
+         width: 100%;
+         max-width: 1200px;
+         margin-top: 30px;
+      }
+
+      .preview div {
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+      }
+      .preview div .photo {
+         width: 100%;
+         position: relative;
+         margin-bottom:20px;
+         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .preview div .photo img {
+        width: 100%;
+        height: 250px; /* Fixed height for uniformity */
+        object-fit: cover; /* Ensure images cover the area */
+        cursor: zoom-in;
+        display: block;
+      }
+
+      .preview div .photo .fa-trash {
+        color: white;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(0,0,0,0.5);
+        padding: 8px;
+        border-radius: 50%;
+        font-size: 18px;
+        z-index: 100;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .preview div .photo:hover .fa-trash {
+          opacity: 1;
+      }
+      .preview div .photo .fa-trash:hover{
+        color: red;
+      }
+
+      .hide{
+        display: none;
+      }
+
+      .modal{
+        position: fixed;
+        top:0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0,0,0,0.8);
+        z-index: 1000;
+        padding: 20px;
+      }
+
+      .modal .fa-circle-xmark{
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 40px;
+        color: white;
+        cursor:pointer;
+        z-index: 1001;
+      }
+
+      .modal img{
+        max-width: 90%;
+        max-height: 90%;
+        border-radius:20px;
+      }
+
+      /*Ai page*/
+      .aicontentpage{
+         font-family: Arial, sans-serif;
+         margin: 0;
+         background-color: #f4f7f9;
+         color: #333;
+         width: 100%;
+         height: 100vh;
+         position: fixed;
+         top:0;
+         left:0;
+         bottom:0;
+         z-index:10;
+         overflow-y: auto;
+         display: none;
+         padding: 20px;
+         box-sizing: border-box;
+      }
+      .aicontentpage .fa-xmark{
+         position: absolute;
+         top:20px;
+         left :20px;
+         font-size: 24px;
+         z-index:15;
+         cursor: pointer;
+         color: #333;
+      }
+      .dark-mode .aicontentpage .fa-xmark {
+          color: #fff;
+      }
+
+      .aicontainer {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .dark-mode .aicontainer {
+            background: #222;
+            color: #eee;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+        .aicontentpage h1 {
+            color: #8E2DE2;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+       .aicontentpage h2 {
+             margin-top: 30px;
+             border-bottom: 1px solid #eee;
+             padding-bottom: 5px;
+        }
+       .aicontentpage textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+        .dark-mode .aicontentpage textarea {
+            border-color: #555;
+            background-color: #333;
+            color: #eee;
+        }
+       .aicontentpage button {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #00BFA6, #8E2DE2);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-right: 10px;
+        }
+       .aicontentpage button:hover {
+            background: linear-gradient(135deg, #8E2DE2, #00BFA6);
+            transform: translateY(-2px);
+        }
+
+        /* --- CHAT DISPLAY STYLES --- */
+        #gemini-output {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .dark-mode #gemini-output {
+            background-color: #333;
+            border-color: #555;
+        }
+
+        .user-message {
+            background-color: #e0e0e0;
+            color: #333;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #8E2DE2;
+            word-wrap: break-word;
+            text-align: right;
+        }
+        .dark-mode .user-message {
+            background-color: #444;
+            border-left-color: #00BFA6;
+            color: #fff;
+        }
+
+        .gemini-message {
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #00BFA6;
+            word-wrap: break-word;
+        }
+        .dark-mode .gemini-message {
+            background-color: #2a2a2a;
+            border-left-color: #8E2DE2;
+            color: #eee;
+        }
+
+        .system-note {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            border: 1px solid #ffeeba;
+        }
+        .dark-mode .system-note {
+            background-color: #40310b;
+            color: #eacb85;
+            border-color: #7d5f05;
+        }
+
+        #gemini-output hr {
+            border: none;
+            border-top: 1px dotted #ccc;
+            margin: 20px 0;
+        }
+        .dark-mode #gemini-output hr {
+            border-top-color: #555;
+        }
+
+        .gemini-message pre {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 400px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .dark-mode .gemini-message pre {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+        }
+
+        .gemini-message code {
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            display: block;
+        }
+
+       .aicontentpage .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            border: 1px solid #f5c6cb;
+        }
+        .dark-mode .aicontentpage .error-message {
+            background-color: #58151c;
+            color: #f1b0b7;
+            border-color: #c87a80;
+        }
+
+        .loading-message {
+            color: #007bff;
+            font-style: italic;
+            padding: 15px;
+        }
+        .dark-mode .loading-message {
+            color: #6cb2eb;
+        }
+
+      #ai-img{
+        width: 40px;
+        height:40px;
+        position: fixed;
+        bottom:20px;
+        right:20px;
+        z-index:5;
+        outline:2px solid;
+        cursor: pointer;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      }
+      .dark-mode #ai-img {
+          outline-color: #fff;
+          box-shadow: 0 4px 8px rgba(255,255,255,0.2);
+      }
+
+      /* Media Queries for responsiveness */
+      @media (max-width: 768px) {
+        .navbar {
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 10px 15px;
+        }
+        .navbar h1 {
+          margin-bottom: 10px;
+        }
+        .bar {
+          flex-direction: column;
+          align-items: center;
+        }
+        .bar .filter {
+          margin-bottom: 15px;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        .bar .form {
+          flex-direction: column;
+          width: 100%;
+          max-width: 300px;
+        }
+        .bar form input[type="file"],
+        .bar form select,
+        .main button {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .preview {
+            grid-template-columns: 1fr;
+        }
+        .title {
+            font-size: 2.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+          .title {
+              font-size: 2rem;
+          }
+          .hamburger {
+              top: 10px;
+              left: 0;
+          }
+          .sidebar {
+              width: 220px;
+          }
+          .sidebar-header h2 {
+              font-size: 20px;
+          }
+          .sidebar-links a {
+              font-size: 16px;
+          }
+          .navbar {
+              padding: 10px;
+          }
+          .clock {
+              font-size: 14px;
+          }
+          .toggle-btn {
+              padding: 6px 10px;
+          }
+          .modal{
+              padding: 0;
+          }
+          .modal img{
+              width: auto;
+              height: auto;
+          }
+      }
+    </style>
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M4VSECXJ2H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M4VSECXJ2H');
+</script>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>📁 Menu</h2>
+        <button class="close-btn" onclick="toggleSidebar()" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <ul class="sidebar-links">
+        <li>
+          <a href="dashboard.html"><i class="fas fa-home"></i> Home</a>
+        </li>
+        <li>
+          <a href="weather.html"><i class="fas fa-cloud-sun"></i> Weather</a>
+        </li>
+        <li>
+          <a href="calendar.html"><i class="fas fa-calendar-check"></i> Calendar</a>
+        </li>
+        <li>
+           <a href="travel.html"><i class="fa-solid fa-map-location"></i> Travel</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Hamburger Button -->
+    <button id="hamburger" class="hamburger" aria-label="Toggle menu" onclick="toggleSidebar()">
+      &#9776;
+    </button>
+
+    <!-- Navbar -->
+    <div class="navbar">
+      <h1>🌌 Gallery</h1>
+      <div>
+        <span class="clock" id="clock"></span>
+        <button class="toggle-btn" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+          <i id="mode-icon" class="fas fa-moon"></i>
+        </button>
+      </div>
+    </div>
+
+ <!--- Main page----> 
+  <div class="main">
+     <div class="title">Photo Gallery </div>
+     <div class="bar">
+        <div class="filter">
+            <button id="all" class="active">All</button>
+            <button id="travel-btn">Travel</button>
+            <button id="nature-btn">Nature</button>
+            <button id="event-btn">Events</button>
+        </div>
+        <div class="form">
+            <form id="upload-form">
+                <label for="photo" class="custom-file-upload">📁 Upload Image</label>
+                <input id="photo" type="file" name="photo" accept="image/*" multiple required style="display: none;">
+                <select id="category" name="category" required>
+                    <option value="">Select Category</option>
+                    <option value="travel">Travel</option>
+                    <option value="nature">Nature</option>
+                    <option value="event">Event</option>
+                </select>
+                <button id="upload-btn" type="submit">Upload</button>
+            </form>
+        </div>
+    </div>
+    <div id="preview" class="preview">
+        <div class="travel" data-category="travel" id="travel">
+            <div class="photo">
+             
+                
+            </div>
+        </div>
+        <div class="nature" data-category="nature" id="nature">
+            <div class="photo">
+                
+                
+            </div>
+        </div>
+        <div class="event" data-category="event" id="event">
+            <div class="photo">
+                
+                
+            </div>
+    </div>
+  </div>
+    
+</div>
+
+<!-- AI Chatbot -->
+<div class="aicontentpage" id="aiContent">
+    <i class="fa-solid fa-xmark" id="x-close"></i>
+    <div class="aicontainer">
+        <h1>Gemini Chatbot</h1>
+        <p>Ask a question or start a conversation by analyzing the current page.</p>
+        <textarea id="user-input" placeholder="Ask Gemini a follow-up question..."></textarea>
+        <button onclick="triggerGeminiRequest()">Send Message</button>
+        <button id="analyzePageBtn">Start Analysis (First Message)</button>
+        <h2>Conversation History:</h2>
+        <div id="gemini-output">
+            Welcome! Start by asking a question or clicking "Start Analysis".
+        </div>
+    </div>
+</div>
+
+  
+
+<!-- Image Modal -->
+  <div class="modal" id="modal">
+    <i class="fa-solid fa-circle-xmark" id="close-modal"></i>
+    <img id="modal-img" src="" alt="Enlarged image">
+  </div>
+
+  
+
+<!-- AI Chatbot Trigger Button -->
+<img src="contents/favicon.png" id="ai-img" alt="AI Chatbot">
+
+<!-- Placeholder for external JS files -->
+<script src="gemini.js"></script>
+<script src="gallery.js" type="module"></script>
+
+<!-- Inline Scripts for functionality (these would ideally be in separate .js files) -->
+
+
+    <script>
+
+const aiBtn = document.getElementById('ai-img');
+const aiCloseBtn = document.getElementById('x-close');
+const aiContent = document.getElementById('aiContent');
+
+aiBtn.addEventListener("click", () => {
+   aiContent.style.display = "flex";
+});
+aiCloseBtn.addEventListener("click", () => {
+   aiContent.style.display = "none";
+});
+        /**
+         * Function executed when the 'Send Message' button is clicked.
+         * This handles all subsequent questions in the conversation.
+         */
+        function triggerGeminiRequest() {
+            const userInput = document.getElementById('user-input').value;
+            if (userInput.trim() !== "") {
+                // The askGemini function handles sending the history array automatically
+                askGemini(userInput);
+                document.getElementById('user-input').value = ''; // Clear input after sending
+            } else {
+                const outputDiv = document.getElementById('gemini-output');
+                outputDiv.innerHTML += '<div class="error-message">Please enter a question or click \'Start Analysis\'.</div>';
+                // Auto-scroll to the bottom
+                outputDiv.scrollTop = outputDiv.scrollHeight;
+            }
+        }
+
+
+
+        // Optional: Allow pressing Enter in the textarea to send message
+        document.getElementById('user-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) { // Prevent Enter from sending if Shift is pressed
+                event.preventDefault(); // Prevent default form submission/newline
+                triggerGeminiRequest();
+            }
+        });
+    </script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+      AOS.init();
+
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        const icon = document.getElementById("mode-icon");
+        icon.classList.toggle("fa-moon");
+        icon.classList.toggle("fa-sun");
+      }
+
+      function updateClock() {
+        const now = new Date();
+        document.getElementById("clock").textContent = now.toLocaleTimeString();
+      }
+
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("hamburger").classList.toggle("hidden");
+      }
+
+
+    </script>
+</body>
+</html>

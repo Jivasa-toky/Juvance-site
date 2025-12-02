@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="icon" href="contents/favicon.png">
+    <link rel="stylesheet" href="login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5XKNMBJW45"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5XKNMBJW45');
+</script>
+</head>
+<body>
+    <div id="hero" class="hero">
+      <!--  <div class="svg" >
+          <img src="juvance-cave-logo_Version2.svg">
+        </div>-->
+            <div class="profile-card">
+            <h1>Login</h1>
+            <form action="#" method="post">
+                <input type="text" id="email" placeholder="Email" required style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                
+                <input type="password" id="password" placeholder="Password" required style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                
+                <label style="display: block; margin-bottom: 15px;">
+                    <input type="checkbox" > Show Password
+                </label>
+
+                <button id="validate-user" type="button"  class="login-button">Log In</button>
+            </form>
+
+            <p style="margin-top: 15px;">
+                <a href="forgot.html" style="color:#00BFA6; text-decoration: underline;">Forgot Password?</a>
+            </p>
+            <p style="margin-top: 15px;">
+                <a href="signup.html" style="color:#00BFA6; text-decoration: underline;">Invite only sign up</a>
+            </p>
+
+            <p><a href="index.html" class="login-button" style="margin-top: 15px; display: inline-block;">Back to Home</a></p>
+        </div>
+     <div class="photo-source"><p>Photographer: </p><a target="_blank" id="photographerName" href="">Name</a> on <a target="_blank"  href="https://unsplash.com?utm_source=juvance-cave&utm_medium=referral">unsplash</a></div>
+    </div>
+<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script> <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js"></script> <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-ai.js"></script>
+<script type= "module" src= "login.js"></script>    
+</body>
+</html>

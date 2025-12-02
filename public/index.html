@@ -1,16 +1,49 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Home</title>
-</head>
-<body>
-  <h1>Welcome to my site</h1>
-  <nav>
-  <a href="/home">Home</a> |
-   <a href="/about">About</a> |
-  <a href="/contact">Contact</a>
-  </nav>
-  <p>This is the home page.</p>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Welcome</title>
+    <link rel="stylesheet" href="login.css" />
+   <link rel="icon" href="contents/favicon.png">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5XKNMBJW45"></script>
+  </head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M4VSECXJ2H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M4VSECXJ2H');
+</script>
+  <body>
+    <div id="hero" class="hero">
+      <div class="svg" >
+       <a href="index.html">  <img src="juvance-cave-logo_Version2.svg"></a>
+      </div>
+        <div class="profile-card">
+        <img
+          src="contents/148179019.png"
+          alt="Profile Picture"
+          class="profile-pic"
+        />
+        <h1>Hello, I'm Juvance</h1>
+        <p>Welcome to this website. Please log in to continue.</p>
+        <a href="login.html" class="login-button">Log In</a>
+      </div>
+      <div class="photo-source"><p>Photographer: </p><a target="_blank" id="photographerName" href="">Name</a> on <a target="_blank"  href="https://unsplash.com?utm_source=juvance-cave&utm_medium=referral">unsplash</a></div>
+    </div>
+    <footer>
+      <section class="contact-info">
+         
+          <p>&copy; 2025 Juvance. All rights reserved.</p>
+      </section>
+    </footer>
+    <script type= "module" src= "login.js"></script>    
+ </body>
 </html>

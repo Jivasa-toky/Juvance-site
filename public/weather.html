@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Application</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+    <link rel="icon" href="contents/favicon.png">
+    <style>
+        /* General Styles & Theme Variables */
+        :root {
+            --primary-color: #00BFA6;
+            --secondary-color: #8E2DE2;
+            --text-color: #ffffff;
+            --bg-blur: rgba(0, 0, 0, 0.3);
+            --hover-color: #00e5ff;
+            --nav-color: #333;
+            --nav-bg-color: rgba(255, 255, 255, 0.9);
+            --sidebar-bg: rgba(255, 255, 255, 0.9);
+            --modal-overlay-bg: rgba(0, 0, 0, 0.6);
+            --card-bg: rgba(255, 255, 255, 0.15);
+            --box-shadow-light: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --box-shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.25);
+            --border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Roboto", sans-serif;
+            background-color: var(--sidebar-bg);
+            background-size: cover;
+            transition: background-color 0.5s, color 0.5s;
+            overflow-x: hidden;
+        }
+
+        body.dark-mode {
+            --primary-color: #FF9800;
+            --secondary-color: #FF5722;
+            --text-color: #e0e0e0;
+            --bg-blur: rgba(0, 0, 0, 0.3);
+            --hover-color: #FFC107;
+            --nav-color: #fff;
+            --nav-bg-color: rgba(50, 50, 50, 0.9);
+            --sidebar-bg: rgba(30, 30, 30, 0.9);
+            --modal-overlay-bg: rgba(0, 0, 0, 0.8);
+            --card-bg: rgba(30, 30, 30, 0.6);
+            --box-shadow-light: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --box-shadow-strong: 0 12px 40px rgba(0, 0, 0, 0.4);
+            --border-color: rgba(255, 255, 255, 0.1);
+            background-color: #121212;
+        }
+
+        /* Typography & Spacing */
+        h1, h2, h3 {
+            font-weight: 700;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        /* Utility Classes */
+        .visually-hidden { 
+            position: absolute;
+            width: 1px; 
+            height: 1px; 
+            padding: 0; 
+            margin: -1px; 
+            overflow: hidden; 
+            clip: rect(0, 0, 0, 0); 
+            white-space: nowrap; 
+            border-width: 0;
+        }
+
+        /* Animations */
+        @keyframes gradientBG {
+            0%, 100% { background-position: 0% 50%;
+            }
+            50% { background-position: 100% 50%;
+            }
+        }
+        @keyframes rotate {
+            0% { transform: rotate(0deg);
+            }
+            100% { transform: rotate(360deg);
+            }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0);
+            }
+            50% { transform: translateY(-10px);
+            }
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg);
+          }
+          100% { transform: rotate(360deg);
+          }
+        }
+
+        /* --- Layout & Components --- */
+
+        /* Header/Navbar */
+        .navbar {
+            background-color: var(--nav-bg-color);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            padding-left: 60px; /* Accommodate hamburger */
+            color: var(--nav-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow-light);
+            position: relative;
+            z-index: 100;
+        }
+        .navbar h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        .navbar h1 .fa-cloud-sun {
+            margin-right: 8px;
+        }
+        .navbar .right-controls {
+            display: flex;
+            align-items: center;
+        }
+        .clock {
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .toggle-btn {
+            background: none;
+            border: 2px solid currentColor;
+            color: inherit;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: transform 0.2s ease;
+        }
+        .toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Hamburger Button */
+        .hamburger {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1100;
+            padding: 5px;
+            transition: transform 0.2s ease;
+        }
+        .hamburger:hover {
+            transform: scale(1.1);
+        }
+        .hamburger.hidden { 
+            display: none;
+            /* Or opacity: 0; */
+        }
+        .dark-mode .hamburger {
+            color: #fff;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -5000px;
+            width: 250px;
+            height: 100%;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+            color: #333;
+        }
+        .dark-mode .sidebar {
+            color: #fff;
+        }
+        .sidebar.open {
+            left: 0;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .sidebar-header h2 {
+            font-size: 20px;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: inherit;
+            padding: 5px;
+             transition: transform 0.2s ease;
+        }
+        .close-btn:hover {
+            transform: scale(1.1);
+        }
+        .dark-mode .close-btn {
+            color: #fff;
+        }
+        .sidebar-links {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .sidebar-links li {
+            margin: 15px 0;
+        }
+        .sidebar-links a {
+            text-decoration: none;
+            color: inherit;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        .sidebar-links a:hover {
+            color: var(--hover-color);
+            transform: translateX(5px);
+        }
+        .sidebar-links i {
+            margin-right: 10px;
+            width: 20px; /* Align icons */
+            text-align: center;
+        }
+
+        /* Main Content Area */
+        main {
+            padding: 30px;
+            margin: 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            box-shadow: var(--box-shadow-strong);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Container for the main background image */
+        #main-content-wrapper {
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            position: relative;
+            transition: background-image 0.5s ease;
+        }
+        #main-content-wrapper::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-overlay-bg);
+            z-index: 0;
+        }
+        .dark-mode #main-content-wrapper::before {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Weather Row */
+        .weather-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        /* Weather Cards */
+        .current-weather, .weather-details {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: var(--box-shadow-strong);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px var(--border-color) solid;
+        }
+        .current-weather:hover, .weather-details:hover, .forecast-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+        .current-weather {
+            flex: 1 1 100%;
+            max-width: 600px;
+        }
+        .weather-details {
+            flex: 1 1 100%;
+            max-width: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        .weather-details::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent 70%);
+            animation: rotate 10s linear infinite;
+            z-index: 0;
+        }
+        .weather-details h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        .weather-details p {
+            font-size: 16px;
+            margin: 8px 0;
+            padding-left: 10px;
+            border-left: 3px solid var(--primary-color);
+            position: relative;
+            z-index: 1;
+            transition: transform 0.2s ease;
+        }
+        .weather-details p:hover {
+            transform: translateX(5px);
+            color: var(--hover-color);
+        }
+        .weather-details i {
+            margin-right: 8px;
+            color: var(--hover-color);
+            min-width: 20px;
+        }
+
+        /* Forecast Section */
+        .forecast {
+            margin-top: 30px;
+            width: 100%;
+        }
+        .forecast h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .forecast-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        .forecast-item {
+            flex: 1 1 180px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: var(--box-shadow-strong);
+            border: 1px var(--border-color) solid;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .forecast-item img {
+            width: 60px;
+            height: 60px;
+            margin: 10px 0;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Weather Condition Display */
+        .weather-condition {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .weather-condition img {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+        .temp {
+            font-size: 56px;
+            font-weight: 700;
+        }
+        .condition {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        #location {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 500px;
+            padding: 0 15px;
+        }
+        .search-bar input {
+            padding: 12px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            flex: 1;
+            outline: none;
+            background: var(--nav-bg-color);
+            color: var(--nav-color);
+            box-shadow: var(--box-shadow-light);
+        }
+        .search-bar button {
+            padding: 12px 25px;
+            font-size: 16px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .search-bar button:hover {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            transform: scale(1.05);
+        }
+
+        /* Aside Sections */
+        aside {
+            padding: 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border-radius: 10px;
+            margin: 20px;
+            box-shadow: var(--box-shadow-strong);
+            border: 1px var(--border-color) solid;
+        }
+        .weather-alerts h2 {
+             text-align: center;
+            margin-bottom: 15px;
+        }
+
+        /* AI Chatbot Styles */
+        #ai-chatbot-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1010;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            box-shadow: var(--box-shadow-strong), 0 0 0 2px var(--border-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        #ai-chatbot-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+        }
+        #ai-chatbot-toggle .fa-robot {
+             animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 
+            0% { transform: scale(1);
+            }
+            50% { transform: scale(1.1);
+            }
+            100% { transform: scale(1);
+            }
+        }
+
+        .ai-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--modal-overlay-bg);
+            z-index: 1100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .ai-modal-overlay.open {
+            display: flex;
+        }
+        .ai-modal-content {
+            background: var(--sidebar-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow-strong);
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .ai-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .ai-modal-header h2 {
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+        .ai-modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 30px;
+            cursor: pointer;
+            color: inherit;
+            padding: 5px;
+            transition: transform 0.2s ease;
+        }
+        .ai-modal-close-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            color: var(--secondary-color);
+        }
+
+        /* Chat Area */
+        #gemini-output {
+            flex-grow: 1;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: var(--card-bg);
+            overflow-y: auto;
+            border: 1px var(--border-color) solid;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .user-message, .gemini-message {
+            padding: 12px 18px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+            box-shadow: var(--box-shadow-light);
+            position: relative;
+            border-left: 5px solid;
+        }
+        .user-message {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            margin-left: auto;
+            border-left-color: var(--secondary-color);
+            text-align: right;
+        }
+        .gemini-message {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            border-left-color: var(--primary-color);
+        }
+        .gemini-message pre {
+            background-color: rgba(0,0,0,0.3);
+            color: #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 8px;
+        }
+        .gemini-message code {
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }
+        .system-note {
+            background-color: #d3e0ea;
+            color: #0056b3;
+            font-style: italic;
+            font-size: 0.9em;
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 5px solid #007bff;
+            text-align: center;
+        }
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            border: 1px solid #f5c6cb;
+            text-align: center;
+        }
+
+        /* Input Area */
+        .ai-input-area {
+            display: flex;
+            margin-top: 20px;
+            align-items: center;
+        }
+        .ai-input-area textarea {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 50px;
+            font-size: 16px;
+            margin-right: 10px;
+            background: var(--nav-bg-color);
+            color: var(--nav-color);
+        }
+        .ai-input-area button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            font-size: 16px;
+            height: 50px; /* Match textarea height */
+        }
+        .ai-input-area button:hover {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            transform: scale(1.05);
+        }
+
+        /* Loading Spinner */
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--modal-overlay-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+        .spinner-overlay.hidden { 
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-top: 8px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            margin-top: 30px;
+        }
+        footer section {
+            margin: 10px;
+        }
+        footer h3 {
+            margin-bottom: 10px;
+            color: var(--hover-color);
+        }
+        footer a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: var(--hover-color);
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .navbar {
+                padding-left: 50px;
+            }
+            .hamburger {
+                left: 10px;
+            }
+            .current-weather {
+                flex-basis: 100%;
+                max-width: none;
+            }
+            .weather-details {
+                flex-basis: 100%;
+                max-width: none;
+            }
+            .forecast-item {
+                flex-basis: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .weather-row {
+                flex-direction: column;
+                align-items: center;
+            }
+            .search-bar {
+                flex-direction: column;
+            }
+            .search-bar input, .search-bar button {
+                width: 100%;
+            }
+            .navbar h1 {
+                font-size: 20px;
+            }
+            .clock {
+                font-size: 14px;
+                margin-right: 10px;
+            }
+            footer {
+                flex-direction: column;
+            }
+        }
+        @media (max-width: 600px) {
+             .navbar h1 {
+                 font-size: 18px;
+                 display: flex;
+                 align-items: center;
+             }
+             .navbar h1 .fa-cloud-sun {
+                 font-size: 20px;
+                 margin-right: 5px;
+             }
+             .clock {
+                 display: none;
+                 /* Hide clock on very small screens */
+             }
+             .toggle-btn {
+                 font-size: 16px;
+             }
+             .sidebar { width: 220px;
+             }
+             .ai-modal-content {
+                 max-width: 95%;
+             }
+        }
+
+        /* Accessibility Improvements */
+        button:focus, input:focus, select:focus, textarea:focus, a:focus {
+            outline: 3px solid var(--hover-color);
+            outline-offset: 3px;
+        }
+        a:not(:focus):hover {
+            color: var(--hover-color);
+        }
+    </style>
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M4VSECXJ2H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M4VSECXJ2H');
+</script>
+
+<body data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0">
+
+    <div class="spinner-overlay" id="global-spinner">
+        <div class="loader"></div>
+    </div>
+
+    <div id="main-content-wrapper" class="container-body">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-bars" aria-hidden="true"></i> Menu</h2>
+                <button class="close-btn" id="close-sidebar" aria-label="Close Menu">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+            <ul class="sidebar-links">
+                <li><a href="dashboard.html"><i class="fas fa-home" aria-hidden="true"></i> Home</a></li>
+                <li><a href="weather.html"><i class="fas fa-cloud-sun" 
+                    aria-hidden="true"></i> Weather</a></li>
+                <li><a href="calendar.html"><i class="fas fa-calendar-check" aria-hidden="true"></i> Calendar</a></li>
+                <li><a href="travel.html"><i class="fa-solid fa-map-location" aria-hidden="true"></i> Travel</a></li>
+            </ul>
+        </div>
+
+        <button id="hamburger" class="hamburger" aria-label="Open Menu">
+            <i class="fas fa-bars" aria-hidden="true"></i>
+        </button>
+
+        <div class="navbar">
+            <h1><i class="fas fa-cloud-sun" aria-hidden="true"></i> Weather</h1>
+            <div class="right-controls">
+                <span class="clock" id="clock"></span>
+                <select id="unit-select" aria-label="Select temperature unit" style="margin-right: 15px; padding: 5px; border-radius: 6px;">
+                    <option value="celsius">°C</option>
+                    <option value="fahrenheit">°F</option>
+                </select>
+                <button class="toggle-btn" id="dark-mode-toggle" aria-label="Toggle Dark Mode">
+                    <i id="mode-icon" class="fas fa-moon" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+
+        <main>
+            <div class="search-bar">
+                <input id="search-value" type="text" placeholder="Enter location" aria-label="Enter location">
+                <button id="search-btn" type="button" aria-label="Search for weather">
+                    <i class="fas fa-search" aria-hidden="true"></i> Search
+                </button>
+            </div>
+
+            <div class="weather-row">
+                <section class="current-weather" aria-labelledby="current-weather-title">
+                    <h2 id="current-weather-title">Current Weather</h2>
+                    <p id="location">Location: Loading...</p>
+                    <div class="weather-condition">
+                        <img id="current-weather-icon" src="" alt="Current weather icon">
+                        <p id="temp" class="temp"></p>
+                        <p id="condition" class="condition"></p>
+                    </div>
+                </section>
+
+                <section class="weather-details" aria-labelledby="weather-details-title">
+                    <h2 id="weather-details-title">Weather Details</h2>
+                    <p id="feel-like"><i class="fas fa-thermometer-half" aria-hidden="true"></i> Feels Like: <span></span></p>
+                    <p id="humidity"><i class="fa-solid fa-droplet" aria-hidden="true"></i> Humidity: <span></span></p>
+                    <p id="wind-speed"><i class="fa-solid fa-wind" aria-hidden="true"></i> Wind Speed: <span></span></p>
+                    <p id="pressure"><i class="fas fa-tachometer-alt" aria-hidden="true"></i> Pressure: <span></span></p>
+                    <p id="visibility"><i class="fas fa-eye" aria-hidden="true"></i> Visibility: <span></span></p>
+                    <p id="sunrise"><i class="fas fa-sun" aria-hidden="true"></i> Sunrise: <span></span></p>
+                    <p id="sunset"><i class="fas fa-moon" aria-hidden="true"></i> Sunset: <span></span></p>
+                    <p id="temp_max"><i class="fas fa-temperature-high" aria-hidden="true"></i> Max Temp: <span></span></p>
+                    <p id="temp_min"><i class="fas fa-temperature-low" aria-hidden="true"></i> Min Temp: <span></span></p>
+                </section>
+            </div>
+
+            <section class="forecast" aria-labelledby="forecast-title">
+                <h2 id="forecast-title">5-Day Forecast</h2>
+                <div class="forecast-row" id="forecast-row">
+                    <div class="forecast-item" data-aos="fade-up" data-aos-delay="100">
+                        <h3 id="tommorow">Tomorrow</h3>
+                        <img id="tommorow-icon" src="" alt="Forecast Icon">
+                        <p id="tommorow-cond">Condition:</p>
+                        <p id="tommorow-temp">Temp: </p>
+                        <p id="tommorow-rain">Rain: </p>
+                    </div>
+
+                    <div class="forecast-item" data-aos="fade-up" data-aos-delay="200">
+                        <h3 id="next-tommorow">Day 2</h3>
+                        <img id="next-tommorow-icon" src="" alt="Forecast Icon">
+                        <p id="next-tommorow-cond">Condition:</p>
+                        <p id="next-tommorow-temp">Temp: </p>
+                        <p id="next-tommorow-rain">Rain: </p>
+                    </div>
+
+                    <div class="forecast-item" data-aos="fade-up" data-aos-delay="300">
+                        <h3 id="next-tow-days">Day 3</h3>
+                        <img id="next-tow-days-icon" src="" alt="Forecast Icon">
+                        <p id="next-tow-days-cond">Condition:</p>
+                        <p id="next-tow-days-temp">Temp: </p>
+                        <p id="next-tow-days-rain">Rain: </p>
+                    </div>
+
+                    <div class="forecast-item" data-aos="fade-up" data-aos-delay="400">
+                        <h3 id="next-three-days">Day 4</h3>
+                        <img id="next-three-days-icon" src="" alt="Forecast Icon">
+                        <p id="next-three-days-cond">Condition:</p>
+                        <p id="next-three-days-temp">Temp: </p>
+                        <p id="next-three-days-rain">Rain: </p>
+                    </div>
+
+                    <div class="forecast-item" data-aos="fade-up" data-aos-delay="500">
+                        <h3 id="next-four-days">Day 5</h3>
+                        <img id="next-four-days-icon" src="" alt="Forecast Icon">
+                        <p id="next-four-days-cond">Condition:</p>
+                        <p id="next-four-days-temp">Temp: </p>
+                        <p id="next-four-days-rain">Rain: </p>
+                    </div>
+                    </div>
+            </section>
+        </main>
+
+        <aside>
+            <section class="weather-alerts" aria-labelledby="alerts-title">
+                <h2 id="alerts-title">Weather Alerts</h2>
+                <p>No weather alerts for this location.</p>
+            </section>
+        </aside>
+    </div>
+
+    <button id="ai-chatbot-toggle" aria-label="Open AI Chatbot">
+        <i class="fa-solid fa-robot" aria-hidden="true"></i>
+    </button>
+
+    <div class="ai-modal-overlay" id="ai-modal-overlay">
+        <div class="ai-modal-content">
+            <div class="ai-modal-header">
+                <h2><i class="fa-solid fa-robot" aria-hidden="true"></i> Gemini Chatbot</h2>
+                <button class="ai-modal-close-btn" id="ai-modal-close-btn" aria-label="Close AI Chatbot">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div id="gemini-output">
+                <p class="system-note">Welcome!
+                    I can help you understand the weather data. Start by asking a question or clicking 'Analyze Current Page'.</p>
+            </div>
+            <div class="ai-input-area">
+                <textarea id="user-input" placeholder="Ask a follow-up question..." rows="2" aria-label="Your message to Gemini"></textarea>
+                <button id="send-message-btn" type="button" aria-label="Send Message">
+                    <i class="fas fa-paper-plane" aria-hidden="true"></i> Send
+                </button>
+            </div>
+            <button id="analyze-page-btn" type="button" style="margin-top: 15px;">Analyze Current Page</button>
+        </div>
+    </div>
+
+    <footer>
+        <section>
+            <h3>About Us</h3>
+            <p>Providing accurate weather information with a user-friendly interface.</p>
+            <p>&copy; 2024 Weather App. All rights reserved.</p>
+        </section>
+        <section>
+            <h3>Quick Links</h3>
+            <p><a href="#">Privacy Policy</a></p>
+            <p><a href="#">Terms of Service</a></p>
+            <p><a href="#">Contact Us</a></p>
+        </section>
+        <section>
+            <h3>Follow Us</h3>
+            <p><a href="#"><i class="fab fa-facebook"></i> Facebook</a></p>
+            <p><a href="#"><i class="fab fa-twitter"></i> Twitter</a></p>
+            <p><a href="#"><i class="fab fa-instagram"></i> Instagram</a></p>
+        </section>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script src="gemini.js"></script> <script src="lib/weather.js" type="module"></script> <script>
+        // --- DOM Element References ---
+        const sidebar = document.getElementById('sidebar');
+        const hamburgerButton = document.getElementById('hamburger');
+        const closeSidebarButton = document.getElementById('close-sidebar');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const modeIcon = document.getElementById('mode-icon');
+        const aiChatbotToggle = document.getElementById('ai-chatbot-toggle');
+        const aiModalOverlay = document.getElementById('ai-modal-overlay');
+        const aiModalCloseButton = document.getElementById('ai-modal-close-btn');
+        const userInputField = document.getElementById('user-input');
+        const sendMessageButton = document.getElementById('send-message-btn');
+        const analyzePageButton = document.getElementById('analyze-page-btn');
+        const globalSpinner = document.getElementById('global-spinner');
+        const mainContentWrapper = document.getElementById('main-content-wrapper');
+
+        // --- Initialization & Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            AOS.init();
+            updateClock();
+            setInterval(updateClock, 1000);
+            // Set initial background based on theme preference (if stored)
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                modeIcon.classList.remove('fa-moon');
+                modeIcon.classList.add('fa-sun');
+            }
+            // Initial weather load (assuming weather.js handles this)
+            // loadWeatherData(); 
+        });
+
+        // Sidebar Toggle
+        hamburgerButton.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            hamburgerButton.classList.add('hidden');
+            aiChatbotToggle.style.zIndex = '100'; // Ensure chatbot button is behind sidebar
+        });
+        closeSidebarButton.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            hamburgerButton.classList.remove('hidden');
+             aiChatbotToggle.style.zIndex = '1010'; // Restore chatbot button z-index
+        });
+        // Close sidebar if clicking outside of it
+        document.addEventListener('click', (event) => {
+            if (sidebar.classList.contains('open') && !sidebar.contains(event.target) && !hamburgerButton.contains(event.target)) {
+                closeSidebarButton.click();
+            }
+        });
+        // Dark Mode Toggle
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            modeIcon.classList.toggle('fa-sun', isDarkMode);
+            modeIcon.classList.toggle('fa-moon', !isDarkMode);
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        });
+        // AI Chatbot Toggle
+        aiChatbotToggle.addEventListener('click', () => {
+            aiModalOverlay.classList.add('open');
+            // Ensure sidebar doesn't overlap if open
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                hamburgerButton.classList.remove('hidden');
+            }
+        });
+        aiModalCloseButton.addEventListener('click', () => {
+            aiModalOverlay.classList.remove('open');
+        });
+        // Close AI modal if clicking outside of it
+        aiModalOverlay.addEventListener('click', (event) => {
+            if (event.target === aiModalOverlay) {
+                aiModalCloseButton.click();
+            }
+        });
+        // Send Message via Button
+        sendMessageButton.addEventListener('click', () => {
+            triggerGeminiRequest();
+        });
+        // Analyze Page Button
+        analyzePageButton.addEventListener('click', () => {
+            // Assume 'analyzePageContent' is a function in gemini.js
+            if (typeof analyzePageContent === 'function') {
+                analyzePageContent(); 
+            } else {
+                console.error(err.name);
+                const outputDiv = document.getElementById('gemini-output');
+                outputDiv.innerHTML += '<div class="error-message">AI analysis feature is not available.</div>';
+                outputDiv.scrollTop = outputDiv.scrollHeight;
+            }
+            userInputField.focus(); // Focus input for follow-up
+        });
+
+        // Allow Enter key to send message (with Shift for newline)
+        userInputField.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault(); 
+                triggerGeminiRequest();
+            }
+        });
+        // --- Helper Functions ---
+        function updateClock() {
+            const now = new Date();
+            document.getElementById("clock").textContent = now.toLocaleTimeString();
+        }
+
+        // Placeholder for the function that triggers Gemini (assumed in gemini.js)
+        function askGemini(message) {
+            console.log("Sending to Gemini:", message);
+            // In a real implementation, this would call a function from gemini.js
+            // Example: Add user message to display
+            const outputDiv = document.getElementById('gemini-output');
+            outputDiv.innerHTML += `<div class=\"user-message\">${message}</div>`;
+            outputDiv.scrollTop = outputDiv.scrollHeight;
+            // Simulate Gemini response (replace with actual API call)
+            setTimeout(() => {
+                outputDiv.innerHTML += `<div class=\"gemini-message\"><p>Thanks for your message! Gemini is thinking...</p><pre><code>This is a simulated response.</code></pre></div>`;
+                outputDiv.scrollTop = outputDiv.scrollHeight;
+            }, 1500);
+        }
+        
+        // Function to show/hide the global spinner
+        function showGlobalSpinner(show) {
+            if (show) {
+                globalSpinner.classList.remove('hidden');
+                mainContentWrapper.style.opacity = '0.5'; // Dim content
+            } else {
+                globalSpinner.classList.add('hidden');
+                mainContentWrapper.style.opacity = '1'; // Restore content
+            }
+        }
+        
+        // Example usage for spinner (e.g., when fetching weather data)
+        // showGlobalSpinner(true);
+        // fetchWeatherData().then(() => showGlobalSpinner(false));
+
+    </script>
+</body>
+</html>

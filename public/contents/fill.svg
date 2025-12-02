@@ -1,0 +1,43 @@
+<svg width="100%" height="100%" viewBox="0 0 100 33" preserveAspectRatio="xMidYMid meet"
+     xmlns="http://www.w3.org/2000/svg"
+     style="position: absolute; top: 0; left: 0; background: #121212; animation: fadeIn 1.5s ease-out forwards; opacity: 0;">
+  <defs>
+    <!-- Gradient for logo text and arrow -->
+    <linearGradient id="juvanceGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00FFE0"/>
+      <stop offset="100%" stop-color="#A259FF"/>
+    </linearGradient>
+
+    <!-- Embedded CSS styles -->
+    <style>
+      @keyframes fadeIn {
+        to { opacity: 1; }
+      }
+
+      .text {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+        fill: url(#juvanceGradient);
+      }
+
+      .v-arrow {
+        fill: url(#juvanceGradient);
+        transition: transform 0.4s ease, filter 0.4s ease;
+        transform-origin: center;
+      }
+
+      .v-arrow:hover {
+        transform: translateY(-0.5px);
+        filter: drop-shadow(0 0 1.5px #00FFE0);
+      }
+    </style>
+  </defs>
+
+  <!-- Centered logo group -->
+  <g transform="translate(15, 22)">
+    <text x="0" y="0" class="text">Ju</text>
+    <polygon class="v-arrow" points="20,-10 25,5 30,-10" />
+    <text x="33" y="0" class="text">ance</text>
+  </g>
+</svg>

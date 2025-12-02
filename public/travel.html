@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Best Places to Visit</title>
+  <link rel="stylesheet" href="travel.css">
+  <script src="travel.js"></script>
+  <meta charset="UTF-8" />
+    <link rel="icon" href="contents/favicon.png" />
+    <!-- Viewport for Mobile Responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Prevent Caching -->
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+   <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+<script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-messaging.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5XKNMBJW45"></script>
+
+<link rel="stylesheet"  href="https://unpkg.com/leaflet/dist/leaflet.css" >
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M4VSECXJ2H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M4VSECXJ2H');
+
+//hour
+AOS.init();
+
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        const icon = document.getElementById("mode-icon");
+        icon.classList.toggle("fa-moon");
+        icon.classList.toggle("fa-sun");
+      }
+
+      function updateClock() {
+        const now = new Date();
+        document.getElementById("clock").textContent = now.toLocaleTimeString();
+      }
+
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("hamburger").classList.toggle("hidden");
+      }
+</script>
+<body>
+   <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>📁 Menu</h2>
+        <button class="close-btn" onclick="toggleSidebar()" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <ul class="sidebar-links">
+        <li>
+          <a href="dashboard.html"><i class="fas fa-home"></i> Home</a>
+        </li>
+        <li>
+          <a href="weather.html"><i class="fas fa-cloud-sun"></i> Weather</a>
+        </li>
+        <li>
+          <a href="calendar.html"><i class="fas fa-calendar-check"></i> Calendar</a>
+        </li>
+        <li>
+           <a href="travel.html"><i class="fa-solid fa-map-location"></i>Travel</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Hamburger Button -->
+    <button
+      id="hamburger"
+      class="hamburger"
+      aria-label="Toggle menu"
+      onclick="toggleSidebar()"
+    >
+      ☰
+    </button>
+  <!-- Navbar -->
+    <div class="navbar">
+      <h1>🗺️ Travel</h1>
+      <div>
+        <span class="clock" id="clock">--:--:--</span>
+        <button class="toggle-btn" onclick="toggleDarkMode()"  aria-label="Toggle dark mode">
+          <i id="mode-icon" class="fas fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  <div class="heading">
+  <h1>Best Places to Visit</h1>
+
+  <div id="search-bar">
+    <input type="text" id="city-input" placeholder="Enter a city..." />
+    <select id="category-filter">
+      <option value="">All Categories</option>
+      <option value="restaurant">Restaurant</option>
+      <option value="museum">Museum</option>
+      <option value="park">Park</option>
+    </select>
+    <select id="rating-filter">
+      <option value="">Any Rating</option>
+      <option value="4">4+ Stars</option>
+      <option value="3">3+ Stars</option>
+    </select>
+    <button onclick="searchCity()">Search</button>
+  </div>
+  </div>
+  <div id="restaurant-list"></div>
+  <div id="map"></div>
+<div class="aicontentpage" id="aiContent">
+    <i class="fa-solid fa-xmark" id="x-close"></i>    
+
+
+        <div class="aicontainer">
+        <h1>Gemini Chatbot</h1>
+        <p>Ask a question or start a conversation by analyzing the current page.</p>
+
+        <textarea id="user-input" placeholder="Ask Gemini a follow-up question..."></textarea>
+
+        <button onclick="triggerGeminiRequest()">Send Message</button>
+        <button id="analyzePage">Start Analysis (First Message)</button>
+
+        <h2>Conversation History:</h2>
+        <div id="gemini-output">
+            Welcome! Start by asking a question or clicking "Start Analysis".
+        </div>
+
+    </div>
+</div>
+  <img src="contents/favicon.png" id="ai-img" >
+
+    <script src="gemini.js"></script>
+
+    <script>
+
+const aiBtn = document.getElementById('ai-img');
+const aiCloseBtn = document.getElementById('x-close');
+const aiContent = document.getElementById('aiContent');
+
+aiBtn.addEventListener("click", () => {
+   aiContent.style.display = "flex";
+});
+aiCloseBtn.addEventListener("click", () => {
+   aiContent.style.display = "none";
+});
+        /**
+         * Function executed when the 'Send Message' button is clicked.
+         * This handles all subsequent questions in the conversation.
+         */
+        function triggerGeminiRequest() {
+            const userInput = document.getElementById('user-input').value;
+            if (userInput.trim() !== "") {
+                // The askGemini function handles sending the history array automatically
+                askGemini(userInput);
+                document.getElementById('user-input').value = ''; // Clear input after sending
+            } else {
+                const outputDiv = document.getElementById('gemini-output');
+                outputDiv.innerHTML += '<div class="error-message">Please enter a question or click \'Start Analysis\'.</div>';
+                // Auto-scroll to the bottom
+                outputDiv.scrollTop = outputDiv.scrollHeight;
+            }
+        }
+
+
+
+        // Optional: Allow pressing Enter in the textarea to send message
+        document.getElementById('user-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) { // Prevent Enter from sending if Shift is pressed
+                event.preventDefault(); // Prevent default form submission/newline
+                triggerGeminiRequest();
+            }
+        });
+    </script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <script type="module">
+    let map;
+    let markers = [];
+
+    async function fetchPlaces(city) {
+      const container = document.getElementById('restaurant-list');
+      container.innerHTML = 'Loading...';
+
+      try {
+        const response = await fetch(`/api/serpapi?q=best places to visit in ${encodeURIComponent(city)}&location=${encodeURIComponent(city)}`);
+        const data = await response.json();
+
+        let places = data.local_results || [];
+        container.innerHTML = '';
+
+        // Apply filters
+        const category = document.getElementById('category-filter').value;
+        const rating = document.getElementById('rating-filter').value;
+
+        if (category) {
+          places = places.filter(p => p.type && p.type.toLowerCase().includes(category.toLowerCase()));
+        }
+
+        if (rating) {
+          places = places.filter(p => p.rating && p.rating >= parseFloat(rating));
+        }
+
+        if (places.length === 0) {
+          container.innerHTML = '<p>No places found.</p>';
+          return;
+        }
+
+        // Clear previous markers
+        markers.forEach(m => map.removeLayer(m));
+        markers = [];
+
+        // Center map on first result
+        const first = places[0];
+        if (first.gps_coordinates) {
+          const { latitude, longitude } = first.gps_coordinates;
+          map.setView([latitude, longitude], 13);
+        }
+
+        places.forEach(place => {
+          const card = document.createElement('div');
+          card.className = 'restaurant-card';
+
+          const image = place.thumbnail || 'https://via.placeholder.com/280x180?text=No+Image';
+          const mapLink = place.link || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.title + ' ' + place.address)}`;
+
+          card.innerHTML = `
+            <button class="save-btn" onclick='saveFavorite(${JSON.stringify(place)})'>❤️ Save</button>
+            <img src="${image}">
+            <h3>${place.title}</h3>
+            <p><strong>Rating:</strong> ${place.rating || 'N/A'} ⭐</p>
+            <p><strong>Address:</strong> ${place.address || 'N/A'}</p>
+            <button onclick = "window.open('${mapLink}','_blank')"> View on Google Maps</button>
+          `;
+
+          container.appendChild(card);
+
+          // Add marker to map
+          if (place.gps_coordinates) {
+            const { latitude, longitude } = place.gps_coordinates;
+            const marker = L.marker([latitude, longitude])
+              .addTo(map)
+              .bindPopup(`<strong>${place.title}</strong><br>${place.address}`);
+            markers.push(marker);
+          }
+        });
+      } catch (error) {
+        console.error('Error fetching places:', error);
+        container.innerHTML = '<p>Failed to load places. Please try again later.</p>';
+      }
+    }
+
+    window.searchCity = function() {
+      const city = document.getElementById('city-input').value.trim();
+      if (city) {
+        fetchPlaces(city);
+      }
+    }
+
+    function saveFavorite(place) {
+      let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+      favorites.push(place);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      alert(`Saved: ${place.title}`);
+    }
+
+    // Initialize map
+    document.addEventListener("DOMContentLoaded", () => {
+      map = L.map('map').setView([-18.8792, 47.5079], 13); // Default to Antananarivo
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+    });      
+  </script>
+</body>
+</html>
