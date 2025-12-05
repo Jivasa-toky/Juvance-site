@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "create to learn new things",
   "keywords": [
-    "jivasa-toky", "node", "server"
+    "jivasa-toky",
+    "node",
+    "server"
   ],
   "repository": {
     "type": "git",
@@ -15,17 +17,17 @@
   "main": "server.js",
   "private": true,
   "scripts": {
-     "start": "node server.js",
-     "dev": "nodemon server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
-    "parse-url": "^10.0.3",
-    "pkg.json": "^0.2.5",
+    "express": "^5.2.1",
+    "parse-url": "^10.0.3"
   },
-  "devDependencies":{
-    "nodemon": "^3.0.0",
+  "devDependencies": {
+    "nodemon": "^3.0.0"
   },
   "engines": {
-    "node":">=18"
+    "node": ">=18"
   }
 }
