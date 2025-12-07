@@ -1,6 +1,8 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const express = require('express');
+const app = express();
 
 const server = http.createServer((req, res) => {
     // Normalize URL (remove query params)
@@ -8,6 +10,11 @@ const server = http.createServer((req, res) => {
 
     // Build file path
     let filePath = path.join(__dirname, 'public', urlPath);
+
+    app.get('/', (req,res) => {
+     res.send('Get request to home page');
+    })
+
     let ext = path.extname(filePath);
 
     // If no extension, assume .html
@@ -39,3 +46,6 @@ const server = http.createServer((req, res) => {
 
 const PORT = 3000;
 server.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Example app running at http://localhost:${PORT}`)
+});
